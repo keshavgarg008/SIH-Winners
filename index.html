@@ -3,18 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazon</title>
+    <title>YATRASATHI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" >
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="nav">
-            <div class="logo"></div>
-            
+    <body>
 
+    <div class="card">
+        <h1 class="title">SecureStay</h1>
+        <p class="subtitle">Please select your portal to continue</p>
+        
+        <div class="options-container">
+            
+            <!-- Guest Button: Navigates to registration/wallet page -->
+            <button class="option-btn guest" onclick="window.location.href='register.html'">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="text-content">
+                    <div class="btn-title">Guest</div>
+                    <div class="btn-desc">Access my digital identity wallet</div>
+                </div>
+            </button>
+
+            <!-- Hotel PMS Button: Navigates to kiosk scanner page -->
+            <button class="option-btn hotel" onclick="window.location.href='kiosk.html'">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                        <path d="M9 22v-4h6v4"></path>
+                        <path d="M8 6h.01"></path>
+                        <path d="M16 6h.01"></path>
+                        <path d="M12 6h.01"></path>
+                        <path d="M12 10h.01"></path>
+                        <path d="M12 14h.01"></path>
+                        <path d="M16 10h.01"></path>
+                        <path d="M16 14h.01"></path>
+                        <path d="M8 10h.01"></path>
+                        <path d="M8 14h.01"></path>
+                    </svg>
+                </div>
+                <div class="text-content">
+                    <div class="btn-title">Hotel Kiosk</div>
+                    <div class="btn-desc">Launch front-desk face scanner</div>
+                </div>
+            </button>
 
         </div>
-    </header>
+    </div>
 </body>
 </html>

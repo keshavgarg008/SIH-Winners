@@ -1,0 +1,118 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Card Container */
+        .card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid #f1f5f9;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 35px;
+        }
+
+        /* Buttons Layout */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 16px;
+            background-color: transparent;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-align: left;
+        }
+
+        /* Icon Container */
+        .icon-box {
+            background-color: #f1f5f9;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .icon-box svg {
+            width: 24px;
+            height: 24px;
+            stroke: #475569;
+            transition: stroke 0.2s ease-in-out;
+        }
+
+        .text-content {
+            margin-left: 16px;
+        }
+
+        .btn-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .btn-desc {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Hover States for Guest Button */
+        .option-btn.guest:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .option-btn.guest:hover .icon-box {
+            background-color: #dbeafe;
+        }
+        .option-btn.guest:hover .icon-box svg {
+            stroke: #2563eb;
+        }
+
+        /* Hover States for Hotel Button */
+        .option-btn.hotel:hover {
+            border-color: #6366f1;
+            background-color: #eef2ff;
+        }
+        .option-btn.hotel:hover .icon-box {
+            background-color: #e0e7ff;
+        }
+        .option-btn.hotel:hover .icon-box svg {
+            stroke: #4f46e5;
+        }
