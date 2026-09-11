@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiVishram - Hotel Terminal OS</title>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #000000; color: #f8fafc; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px; }
+
+        .brand-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 40px; text-align: center; }
+        .status-pill { background-color: #0f172a; border: 1px solid #1e293b; padding: 6px 16px; border-radius: 30px; font-size: 13px; color: #94a3b8; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .status-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
+        .brand-title { font-size: 42px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .brand-subtitle { font-size: 14px; font-weight: 600; color: #64748b; letter-spacing: 2px; text-transform: uppercase; }
+
+        .kiosk-container { background-color: #000000; width: 100%; max-width: 900px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); overflow: hidden; border: 1px solid #1e293b; }
+        .kiosk-header { background-color: #000000; padding: 24px 30px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Dynamic Header Text */
+        .kiosk-title { font-size: 16px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 10px; }
+        .hotel-name-badge { color: #10b981; font-family: monospace; font-size: 14px; background: rgba(16, 185, 129, 0.1); padding: 4px 8px; border-radius: 6px;}
+        
+        .kiosk-badge { background: #1e293b; color: #38bdf8; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid #334155; }
+        .kiosk-body { padding: 30px; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; gap: 20px; }
+        .menu-btn { background-color: #0a0f1d; border: 1px solid #1e293b; border-radius: 20px; padding: 24px 20px; color: white; cursor: pointer; text-align: left; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 16px; width: 100%; height: 100%; box-sizing: border-box; }
+        .menu-btn:hover { border-color: #475569; background-color: #0f172a; transform: translateY(-2px); }
+        .menu-icon { background: #111827; border: 1px solid #1f2937; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .menu-text { display: flex; flex-direction: column; gap: 4px; }
+        .menu-title { font-size: 16px; font-weight: 700; color: #f8fafc; }
+        .menu-desc { font-size: 13px; color: #94a3b8; line-height: 1.4; }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .menu-grid.panel.active { display: grid; }
+        
+        .form-wrapper { max-width: 450px; margin: 0 auto; text-align: center; }
+        .video-wrapper { position: relative; width: 100%; max-width: 400px; margin: 0 auto 16px auto; border-radius: 16px; overflow: hidden; background: #000; border: 1px solid #1e293b; }
+        video { width: 100%; display: block; transform: scaleX(-1); }
+
+        .controls { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
+        .btn { flex: 1 1 0; padding: 10px 16px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; }
+        .btn-start { background-color: #1e293b; color: white; border: 1px solid #334155; }
+        .btn-stop { background-color: #0f172a; color: #94a3b8; border: 1px solid #1e293b; }
+        
+        .action-row { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; gap: 12px; margin-top: 20px; }
+        .btn-verify { background-color: #2563eb; color: white; width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-verify:hover { background-color: #1d4ed8; }
+        .btn-register { background-color: #059669; color: white; width: 100%; padding: 12px; font-size: 14px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-register:hover { background-color: #047857; }
+        .btn-back { background-color: #0f172a; color: #94a3b8; border: 1px solid #1e293b; width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn-back:hover { background-color: #1e293b; color: white; }
+
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .label { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; }
+        .input-field { width: 100%; padding: 12px 16px; font-size: 15px; background-color: #0a0f1d; border: 1px solid #1e293b; border-radius: 10px; color: white; outline: none; letter-spacing: 0.5px; transition: border-color 0.2s; }
+        .input-field:focus { border-color: #3b82f6; }
+        
+        .room-type-block { background-color: #0f172a; border: 1px solid #1e293b; padding: 14px; border-radius: 10px; margin-bottom: 10px; position: relative; }
+        .remove-room-btn { position: absolute; top: 14px; right: 14px; background: #ef4444; color: white; border: none; border-radius: 6px; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .add-room-btn { background: transparent; color: #38bdf8; border: 1px dashed #334155; width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .add-room-btn:hover { background: #0f172a; border-color: #38bdf8; }
+
+        .status-box { font-size: 14px; color: #94a3b8; margin-bottom: 12px; min-height: 20px; text-align: center; font-weight: 600; }
+        .result-box { font-size: 16px; font-weight: 600; min-height: 24px; text-align: center; line-height: 1.5; }
+
+        /* MODALS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-content { background: #0f172a; border: 1px solid #1e293b; border-radius: 20px; padding: 30px; width: 90%; max-width: 400px; color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); max-height: 90vh; overflow-y: auto; }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .room-option { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+        .room-option:hover:not(.sold-out) { border-color: #3b82f6; background: #111827; }
+        .room-option.sold-out { opacity: 0.5; cursor: not-allowed; border-color: #ef4444; }
+        .room-name { font-weight: 700; font-size: 15px; }
+        .room-price { color: #10b981; font-weight: 700; font-size: 16px; }
+        .room-count { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        .room-sold-text { font-size: 12px; color: #ef4444; font-weight: bold; margin-top: 4px; }
+        .close-modal { background: transparent; color: #94a3b8; border: none; font-size: 14px; cursor: pointer; width: 100%; margin-top: 15px; padding: 10px; font-weight: 600; }
+        .close-modal:hover { color: white; }
+
+        /* ACTIVATION SCREEN */
+        .activation-box { border: 1px dashed #334155; padding: 30px; border-radius: 16px; background: #09090b; }
+        .activation-divider { margin: 25px 0; border-bottom: 1px solid #1e293b; position: relative; }
+        .activation-divider span { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #09090b; padding: 0 10px; color: #64748b; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="brand-header">
+        <div class="status-pill"><div class="status-dot"></div>Govt Network Online</div>
+        <h1 class="brand-title">DigiVishram</h1>
+        <div class="brand-subtitle">Physical Kiosk Terminal</div>
+    </div>
+
+    <div class="kiosk-container">
+        <header class="kiosk-header">
+            <div class="kiosk-title">
+                Terminal OS 
+                <span id="headerHotelName" class="hotel-name-badge" style="display:none;">UNASSIGNED</span>
+            </div>
+            <div class="kiosk-badge">SecureStay</div>
+        </header>
+        <div class="kiosk-body">
+            
+            <!-- ========================================= -->
+            <!-- 1. ACTIVATION BOOT SCREEN (NEW) -->
+            <!-- ========================================= -->
+            <div id="activationPanel" class="panel active">
+                <div class="form-wrapper activation-box">
+                    <h3 style="margin-bottom: 15px;">Activate Terminal</h3>
+                    <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">Enter your 16-Digit Property ID to lock this kiosk to your hotel.</p>
+                    
+                    <input type="text" id="activationInput" class="input-field" placeholder="16-Digit ID (e.g. 8374920184756291)" style="text-align: center; font-family: monospace; font-size: 18px; letter-spacing: 2px;">
+                    <div id="activationStatus" class="status-box" style="margin-top: 10px;"></div>
+                    
+                    <button class="btn-verify" style="margin-top: 10px;" onclick="activateTerminal()">Bind & Launch Dashboard</button>
+                    
+                    <div class="activation-divider"><span>OR</span></div>
+                    
+                    <button class="btn-back" onclick="switchPanel('hotelRegPanel')">Register New Property (Get ID)</button>
+                </div>
+            </div>
+
+            <!-- ========================================= -->
+            <!-- 2. MAIN HOTEL DASHBOARD -->
+            <!-- ========================================= -->
+            <div id="mainMenu" class="menu-grid panel">
+                <button class="menu-btn" onclick="openFaceScanPanel()">
+                    <div class="menu-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div>
+                    <div class="menu-text"><div class="menu-title">Verify & Check-In</div><div class="menu-desc">Scan guest face to claim booking.</div></div>
+                </button>
+                <button class="menu-btn" onclick="switchPanel('bypassEntryPanel')">
+                    <div class="menu-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                    <div class="menu-text"><div class="menu-title">Register New Citizen</div><div class="menu-desc">Add ID and Face to central vault.</div></div>
+                </button>
+            </div>
+
+            <!-- ========================================= -->
+            <!-- 3. FACE SCAN (DROPDOWN REMOVED!) -->
+            <!-- ========================================= -->
+            <div id="faceScanPanel" class="panel">
+                <div class="form-wrapper">
+                    <h3 style="margin-bottom: 20px;">Biometric Verification</h3>
+                    <div class="video-wrapper"><video id="videoScan" autoplay muted playsinline></video></div>
+                    <div id="scanStatus" class="status-box">Loading AI Models...</div>
+                    <div id="scanResult" class="result-box"></div>
+                    <div class="controls">
+                        <button class="btn btn-start" onclick="startCamera('videoScan', 'scanStatus')">Turn On Camera</button>
+                        <button class="btn btn-stop" onclick="stopCamera('scanStatus')">Turn Off</button>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-back" onclick="switchPanel('mainMenu')">← Back to Dashboard</button>
+                        <button class="btn-verify" onclick="verifyFace()">Verify Face & Check-In</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CITIZEN REGISTRATION -->
+            <div id="bypassEntryPanel" class="panel">
+                <div class="form-wrapper">
+                    <h3 style="margin-bottom: 15px;">New Citizen Registration</h3>
+                    <div class="video-wrapper"><video id="videoRegister" autoplay muted playsinline></video></div>
+                    <div class="controls">
+                        <button class="btn btn-start" onclick="startCamera('videoRegister', 'regStatus')">Turn On Camera</button>
+                        <button class="btn btn-stop" onclick="stopCamera('regStatus')">Turn Off</button>
+                    </div>
+                    <div class="form-group"><label class="label">Citizen Full Name</label><input type="text" class="input-field" id="bypassName" placeholder="e.g. Parth Midha"></div>
+                    <div class="form-group"><label class="label">Government ID Number</label><input type="text" class="input-field" id="bypassAadhar" placeholder="XXXX XXXX XXXX" maxlength="14"></div>
+                    <div id="regStatus" class="status-box" style="margin-top: 15px;"></div>
+                    <div id="regResult" class="result-box"></div>
+                    <div class="action-row">
+                        <button class="btn-back" onclick="switchPanel('mainMenu')">← Back to Dashboard</button>
+                        <button class="btn-register" onclick="registerNewFace()">Register & Sync</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HOTEL PARTNER SETUP (GENERATES 16-DIGIT ID) -->
+            <div id="hotelRegPanel" class="panel">
+                <div class="form-wrapper">
+                    <h3 style="margin-bottom: 20px;">Register New Property</h3>
+                    <div class="form-group"><label class="label">Hotel Business Name</label><input type="text" id="hotelName" class="input-field" placeholder="e.g. Grand Plaza Hotel"></div>
+                    <div class="form-group"><label class="label">City / Location</label><input type="text" id="hotelLocation" class="input-field" placeholder="e.g. New Delhi"></div>
+                    
+                    <div class="form-group">
+                        <label class="label">Room Categories & Pricing</label>
+                        <div id="roomTypesContainer">
+                            <div class="room-type-block">
+                                <input type="text" class="input-field room-type" placeholder="Category (e.g. Deluxe Room)" style="margin-bottom: 8px;">
+                                <div style="display:flex; gap:10px;">
+                                    <input type="number" class="input-field room-count" placeholder="Qty (e.g. 10)" min="1">
+                                    <input type="number" class="input-field room-price" placeholder="Price (₹)" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-room-btn" onclick="addRoomType()">+ Add Another Room Category</button>
+                    </div>
+
+                    <div id="hotelRegStatus" class="status-box" style="margin-top: 10px; color: #10b981;"></div>
+                    <div class="action-row">
+                        <button class="btn-back" onclick="switchPanel('activationPanel')">← Back to Boot</button>
+                        <button class="btn-verify" onclick="submitHotelRegistration()">Generate ID & Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WALK-IN ROOM SELECTION MODAL -->
+    <div id="roomBookingModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">Walk-In Room Selection</div>
+            <div id="roomListContainer"></div>
+            <button class="close-modal" onclick="document.getElementById('roomBookingModal').style.display='none'">Cancel Check-in</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // GLOBALS FOR THE LOCKED DASHBOARD
+        // =========================================
+        let ACTIVE_HOTEL_ID = "";
+        let ACTIVE_HOTEL_NAME = "";
+        
+        let stream = null; let activeVideoId = 'videoScan'; 
+        const MODEL_URL = "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights";
+
+        function switchPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            stopCamera('scanStatus'); 
+            document.getElementById("scanResult").innerHTML = ""; document.getElementById("regResult").innerHTML = ""; document.getElementById("regStatus").innerText = "";
+        }
+
+        async function openFaceScanPanel() { switchPanel('faceScanPanel'); }
+
+        const aadharInput = document.getElementById('bypassAadhar');
+        if (aadharInput) {
+            aadharInput.addEventListener('input', function (e) {
+                let target = e.target; let val = target.value.replace(/\D/g, '').substring(0, 12);
+                target.value = val != '' ? val.match(/.{1,4}/g).join(' ') : '';
+            });
+        }
+
+        // =========================================
+        // TERMINAL ACTIVATION ENGINE
+        // =========================================
+        async function activateTerminal() {
+            const inputId = document.getElementById('activationInput').value.trim();
+            const statusBox = document.getElementById('activationStatus');
+            
+            if (inputId.length !== 16 || isNaN(inputId)) {
+                statusBox.innerText = "⚠️ Please enter a valid 16-digit ID.";
+                statusBox.style.color = "#ef4444";
+                return;
+            }
+
+            statusBox.innerText = "Connecting to Gov Server...";
+            statusBox.style.color = "#3b82f6";
+
+            const url = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/registered_hotels/${inputId}`;
+            
+            try {
+                const response = await fetch(url, { cache: 'no-store' });
+                if (response.status === 200) {
+                    const data = await response.json();
+                    
+                    // LOCK THE TERMINAL TO THIS HOTEL
+                    ACTIVE_HOTEL_ID = data.fields.hotelId.stringValue;
+                    ACTIVE_HOTEL_NAME = data.fields.hotelName.stringValue;
+                    
+                    // Update Header UI
+                    const headerBadge = document.getElementById('headerHotelName');
+                    headerBadge.style.display = 'inline-block';
+                    headerBadge.innerText = `LOCKED TO: ${ACTIVE_HOTEL_NAME}`;
+                    
+                    // Launch Dashboard
+                    switchPanel('mainMenu');
+                    
+                    // Clear inputs for security
+                    document.getElementById('activationInput').value = "";
+                    statusBox.innerText = "";
+                } else {
+                    statusBox.innerText = "❌ Terminal ID not found in registry.";
+                    statusBox.style.color = "#ef4444";
+                }
+            } catch (error) {
+                statusBox.innerText = "⚠️ Network connection failed.";
+                statusBox.style.color = "#ef4444";
+            }
+        }
+
+        function addRoomType() {
+            const container = document.getElementById('roomTypesContainer');
+            const block = document.createElement('div');
+            block.className = 'room-type-block';
+            block.innerHTML = `
+                <button type="button" class="remove-room-btn" onclick="this.parentElement.remove()">×</button>
+                <input type="text" class="input-field room-type" placeholder="Category (e.g. Ultra Deluxe)" style="margin-bottom: 8px; width: 90%;">
+                <div style="display:flex; gap:10px;">
+                    <input type="number" class="input-field room-count" placeholder="Qty" min="1">
+                    <input type="number" class="input-field room-price" placeholder="Price (₹)" min="0">
+                </div>
+            `;
+            container.appendChild(block);
+        }
+
+        function generate16DigitID() {
+            let id = '';
+            for (let i = 0; i < 16; i++) {
+                id += Math.floor(Math.random() * 10).toString();
+            }
+            return id;
+        }
+
+        async function submitHotelRegistration() {
+            const name = document.getElementById('hotelName').value.trim(); 
+            const location = document.getElementById('hotelLocation').value.trim();
+            const roomBlocks = document.querySelectorAll('.room-type-block');
+            const roomsData = [];
+            
+            roomBlocks.forEach(block => {
+                const type = block.querySelector('.room-type').value.trim();
+                const count = block.querySelector('.room-count').value.trim();
+                const price = block.querySelector('.room-price').value.trim();
+                
+                if (type && count && price) {
+                    roomsData.push({
+                        mapValue: { fields: { type: { stringValue: type }, count: { integerValue: parseInt(count) }, price: { integerValue: parseInt(price) } } }
+                    });
+                }
+            });
+
+            if(!name || !location || roomsData.length === 0) { alert("Please fill in hotel details and at least one complete room category."); return; }
+            
+            // Generate the secure 16-digit ID
+            const hotelId = generate16DigitID();
+            const url = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/registered_hotels?documentId=${hotelId}`;
+            
+            try {
+                await fetch(url, { 
+                    method: "POST", headers: { "Content-Type": "application/json" }, 
+                    body: JSON.stringify({ 
+                        fields: { hotelName: { stringValue: name }, location: { stringValue: location }, hotelId: { stringValue: hotelId }, rooms: { arrayValue: { values: roomsData } }, registeredAt: { timestampValue: new Date().toISOString() } } 
+                    }) 
+                });
+                
+                // Show the 16-Digit ID
+                document.getElementById('hotelRegStatus').innerHTML = `🎉 Property successfully added!<br><br><span style="color:#f8fafc; font-size:14px;">Your secure Terminal ID is:</span><br><span style="color:#38bdf8; font-size: 24px; font-family: monospace;"><b>${hotelId}</b></span><br><br><span style="color:#94a3b8; font-size:12px;">(Copy this and click Back to Boot to activate terminal)</span>`; 
+                
+                document.getElementById('hotelName').value = ""; document.getElementById('hotelLocation').value = "";
+                document.getElementById('roomTypesContainer').innerHTML = `<div class="room-type-block"><input type="text" class="input-field room-type" placeholder="Category (e.g. Deluxe Room)" style="margin-bottom: 8px;"><div style="display:flex; gap:10px;"><input type="number" class="input-field room-count" placeholder="Qty (e.g. 10)" min="1"><input type="number" class="input-field room-price" placeholder="Price (₹)" min="0"></div></div>`;
+            } catch (err) { document.getElementById('hotelRegStatus').innerText = "⚠️ Error saving hotel."; }
+        }
+
+        async function loadModels() {
+            try { await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL); await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL); await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+                document.getElementById("scanStatus").innerText = "✅ AI Ready."; document.getElementById("scanStatus").style.color = "#10b981";
+            } catch(e) { document.getElementById("scanStatus").innerText = "❌ AI Model load failed."; }
+        }
+
+        async function startCamera(videoId, statusId) {
+            if (stream) stopCamera(statusId); activeVideoId = videoId; const videoEl = document.getElementById(videoId); const statusEl = document.getElementById(statusId);
+            try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false }); videoEl.srcObject = stream; statusEl.innerText = "📷 Camera active."; statusEl.style.color = "#3b82f6";
+            } catch(e) { statusEl.innerText = "❌ Camera permission denied."; }
+        }
+
+        function stopCamera(statusId) {
+            if (stream) { stream.getTracks().forEach(track => track.stop()); stream = null; document.getElementById('videoScan').srcObject = null; document.getElementById('videoRegister').srcObject = null;
+                if (statusId) { document.getElementById(statusId).innerText = "📷 Camera stopped."; document.getElementById(statusId).style.color = "#94a3b8"; }
+            }
+        }
+
+        async function getCameraDescriptor() {
+            const videoEl = document.getElementById(activeVideoId);
+            if (!stream) { await startCamera(activeVideoId, activeVideoId === 'videoScan' ? 'scanStatus' : 'regStatus'); await new Promise(r => setTimeout(r, 1500)); }
+            const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+            return detection ? Array.from(detection.descriptor) : null;
+        }
+
+        async function registerNewFace() {
+            const name = document.getElementById("bypassName").value.trim();
+            const rawIdString = document.getElementById("bypassAadhar").value.replace(/\s/g, ''); 
+            const statusEl = document.getElementById("regStatus"); const resultEl = document.getElementById("regResult");
+
+            if (!name || rawIdString.length !== 12) { resultEl.innerHTML = "❌ Please enter Name and valid 12-digit ID."; resultEl.style.color = "#ef4444"; return; }
+            statusEl.innerText = "Capturing face geometry..."; statusEl.style.color = "#f59e0b";
+            
+            const descriptor = await getCameraDescriptor();
+            if (!descriptor) { resultEl.innerHTML = "❌ No face detected."; resultEl.style.color = "#ef4444"; return; }
+
+            const shortId = Math.floor(1000 + Math.random() * 9000);
+            const safeName = name.replace(/[^a-zA-Z0-9]/g, '');
+            const customDocId = `${safeName}_${shortId}`;
+            const descriptorString = JSON.stringify(descriptor);
+            const citizenUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/government_citizens?documentId=${customDocId}`;
+
+            try {
+                await fetch(citizenUrl, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        fields: { 
+                            fullName: { stringValue: name }, customId: { stringValue: customDocId }, 
+                            aadharNumber: { stringValue: rawIdString }, faceDescriptor: { stringValue: descriptorString }, registeredAt: { timestampValue: new Date().toISOString() } 
+                        } 
+                    })
+                });
+                resultEl.innerHTML = `✅ <b>Citizen Registered!</b><br><br>Profile ID: ${customDocId}`; resultEl.style.color = "#10b981"; statusEl.innerText = "Saved to Central Gov Vault.";
+                document.getElementById("bypassName").value = ""; document.getElementById("bypassAadhar").value = "";
+            } catch(err) { resultEl.innerHTML = "⚠️ Registration Failed."; resultEl.style.color = "#ef4444"; }
+        }
+
+        async function fetchCentralDatabaseUsers() {
+            try {
+                const response = await fetch("https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/government_citizens?pageSize=1000", { cache: 'no-store' });
+                const data = await response.json();
+                if (!data.documents) return [];
+                const centralUsers = [];
+                for (const doc of data.documents) {
+                    const fields = doc.fields;
+                    if (fields.faceDescriptor && fields.fullName) {
+                        centralUsers.push({ name: fields.fullName.stringValue, customId: fields.customId ? fields.customId.stringValue : fields.fullName.stringValue, descriptor: JSON.parse(fields.faceDescriptor.stringValue) });
+                    }
+                }
+                return centralUsers;
+            } catch (error) { return []; }
+        }
+
+        function euclideanDistance(d1, d2) { let sum = 0; for (let i = 0; i < d1.length; i++) sum += (d1[i] - d2[i]) ** 2; return Math.sqrt(sum); }
+
+        // =========================================
+        // UPDATED: FACE VERIFICATION (USES LOCKED ID)
+        // =========================================
+        async function verifyFace() {
+            const statusEl = document.getElementById("scanStatus"); 
+            const resultEl = document.getElementById("scanResult");
+            
+            // Failsafe: Ensure terminal is activated
+            if (!ACTIVE_HOTEL_ID || !ACTIVE_HOTEL_NAME) { 
+                alert("Terminal Error: Not bound to a hotel property."); 
+                return; 
+            }
+            
+            resultEl.innerText = ""; statusEl.innerText = "🔍 Scanning face..."; statusEl.style.color = "#3b82f6";
+            
+            const cameraDescriptor = await getCameraDescriptor(); if (!cameraDescriptor) return;
+            statusEl.innerText = "Downloading Central Database...";
+            const centralUsers = await fetchCentralDatabaseUsers();
+
+            let bestMatch = null; let bestDistance = Infinity; let matchedId = null;
+            for (const user of centralUsers) {
+                const regDesc = new Float32Array(user.descriptor); const dist = euclideanDistance(cameraDescriptor, regDesc);
+                if (dist < bestDistance) { bestDistance = dist; bestMatch = user.name; matchedId = user.customId; }
+            }
+
+            if (bestMatch !== null && bestDistance <= 0.50) {
+                statusEl.innerText = "Identity Verified! Checking for Pre-Bookings..."; statusEl.style.color = "#10b981";
+                // Uses the locked ACTIVE_HOTEL_ID automatically
+                checkPreBookingOrWalkIn(ACTIVE_HOTEL_ID, ACTIVE_HOTEL_NAME, matchedId, bestMatch);
+            } else { 
+                resultEl.innerHTML = "❌ <b>ACCESS DENIED</b>"; resultEl.style.color = "#ef4444"; statusEl.innerText = "Face not found in Gov Database."; 
+            }
+        }
+
+        async function checkPreBookingOrWalkIn(hotelId, hotelName, matchedId, bestMatch) {
+            const statusEl = document.getElementById("scanStatus");
+            const resultEl = document.getElementById("scanResult");
+            
+            try {
+                const url = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/permanent_logs?pageSize=1000`;
+                const response = await fetch(url, { cache: 'no-store' });
+                const data = await response.json();
+                
+                const preBooking = (data.documents || []).find(doc => {
+                    if (!doc.fields || !doc.fields.citizenId || !doc.fields.hotelId || !doc.fields.status) return false;
+                    const isUser = doc.fields.citizenId.stringValue === matchedId;
+                    const isHotel = doc.fields.hotelId.stringValue === hotelName || doc.fields.hotelId.stringValue === hotelId;
+                    const isPreBooked = doc.fields.status.stringValue === "Pre-Booked via Wallet";
+                    return isUser && isHotel && isPreBooked;
+                });
+
+                if (preBooking) {
+                    statusEl.innerText = "Pre-Booking Found! Updating status...";
+                    
+                    const docPath = preBooking.name.split('databases/(default)/documents/')[1];
+                    const roomType = preBooking.fields.roomType ? preBooking.fields.roomType.stringValue : "Standard Room";
+                    
+                    const patchUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/${docPath}?updateMask.fieldPaths=status&updateMask.fieldPaths=checkInTime`;
+                    await fetch(patchUrl, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            fields: {
+                                status: { stringValue: "Checked-In Biometrically" },
+                                checkInTime: { timestampValue: new Date().toISOString() }
+                            }
+                        })
+                    });
+
+                    resultEl.innerHTML = `✅ <b>ACCESS GRANTED</b><br><br>Welcome back, ${bestMatch}<br><span style="font-size: 14px; color: #10b981;">Your pre-booked <b>${roomType}</b> is ready.</span>`; 
+                    resultEl.style.color = "#10b981"; 
+                    statusEl.innerText = "Check-in securely logged.";
+                } else {
+                    statusEl.innerText = "No pre-booking found. Fetching available rooms..."; 
+                    fetchAndShowRooms(hotelId, hotelName, matchedId, bestMatch);
+                }
+            } catch (err) {
+                console.error(err);
+                statusEl.innerText = "⚠️ Network error checking bookings.";
+            }
+        }
+
+        async function fetchAndShowRooms(hotelId, hotelName, matchedId, bestMatch) {
+            const url = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/registered_hotels/${hotelId}`;
+            try {
+                const response = await fetch(url, { cache: 'no-store' });
+                const data = await response.json();
+                
+                if (!data.fields || !data.fields.rooms) { alert("This hotel has no room inventory registered."); return; }
+
+                let roomsArray = data.fields.rooms.arrayValue.values || [];
+                const container = document.getElementById('roomListContainer');
+                container.innerHTML = '';
+
+                roomsArray.forEach((roomData, index) => {
+                    const roomFields = roomData.mapValue.fields;
+                    const type = roomFields.type.stringValue;
+                    const count = parseInt(roomFields.count.integerValue);
+                    const price = parseInt(roomFields.price.integerValue);
+
+                    const btn = document.createElement('div');
+                    btn.className = `room-option ${count === 0 ? 'sold-out' : ''}`;
+                    
+                    btn.innerHTML = `
+                        <div>
+                            <div class="room-name">${type}</div>
+                            ${count > 0 ? `<div class="room-count">${count} rooms available</div>` : `<div class="room-sold-text">SOLD OUT</div>`}
+                        </div>
+                        <div class="room-price">₹${price}</div>
+                    `;
+
+                    if (count > 0) { btn.onclick = () => bookRoom(hotelId, hotelName, matchedId, bestMatch, roomsArray, index); }
+                    container.appendChild(btn);
+                });
+
+                document.getElementById('roomBookingModal').style.display = 'flex';
+            } catch(e) { console.error(e); alert("Error fetching room inventory."); }
+        }
+
+        async function bookRoom(hotelId, hotelName, matchedId, bestMatch, roomsArray, roomIndex) {
+            document.getElementById('roomBookingModal').style.display = 'none';
+            const statusEl = document.getElementById("scanStatus"); const resultEl = document.getElementById("scanResult");
+            statusEl.innerText = "Booking room and logging check-in..."; statusEl.style.color = "#f59e0b";
+
+            let currentCount = parseInt(roomsArray[roomIndex].mapValue.fields.count.integerValue);
+            roomsArray[roomIndex].mapValue.fields.count.integerValue = currentCount - 1;
+            const roomTypeName = roomsArray[roomIndex].mapValue.fields.type.stringValue;
+
+            const updateHotelUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/registered_hotels/${hotelId}?updateMask.fieldPaths=rooms`;
+            
+            try {
+                await fetch(updateHotelUrl, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fields: { rooms: { arrayValue: { values: roomsArray } } } }) });
+
+                const passDocId = `${matchedId}_${hotelId}_${Date.now()}`;
+                const passUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/permanent_logs?documentId=${passDocId}`;
+                
+                const today = new Date().toISOString().split('T')[0];
+
+                const passPayload = {
+                    fields: {
+                        citizenId: { stringValue: matchedId },
+                        hotelId: { stringValue: hotelName }, 
+                        roomType: { stringValue: roomTypeName },
+                        startDate: { stringValue: today },
+                        endDate: { stringValue: "Walk-in Checkout" },
+                        checkInTime: { timestampValue: new Date().toISOString() },
+                        status: { stringValue: "Walk-in Biometrically Verified" }
+                    }
+                };
+                
+                await fetch(passUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(passPayload) });
+
+                resultEl.innerHTML = `✅ <b>ROOM BOOKED SUCCESSFULLY</b><br><br>Welcome, ${bestMatch}<br><span style="font-size: 14px; color: #10b981;">1x ${roomTypeName} Reserved</span>`; 
+                resultEl.style.color = "#10b981"; statusEl.innerText = "Check-in securely logged.";
+            } catch (err) { statusEl.innerText = "⚠️ Network error saving booking."; }
+        }
+
+        loadModels();
+    </script>
+</body>
+</html>

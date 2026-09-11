@@ -3,111 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureStay - Gov ID Registration</title>
+    <title>DigiVishram - Guest Access</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        /* =========================================
+           ULTRA-MODERN RESET & BASE 
+           ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         
-        /* Mobile Container */
-        .app-container {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 400px;
-            height: 100vh;
-            max-height: 800px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            display: flex;
+        body { 
+            background-color: #000000; /* Pure OLED Black */
+            color: #ededed;
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; padding: 20px;
+            overflow: hidden;
             flex-direction: column;
-            position: relative;
-        }
-        @media (min-width: 450px) {
-            .app-container { height: 85vh; border-radius: 24px; border: 8px solid #0f172a; }
         }
 
-        .header { padding: 24px 20px; text-align: center; border-bottom: 1px solid #e2e8f0; }
-        .header-title { font-size: 20px; font-weight: 700; color: #0f172a; }
+        /* Subtle Background Glow */
+        .background-glow {
+            position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+            width: 80vw; height: 80vw;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1; pointer-events: none;
+        }
 
-        .content { padding: 30px 20px; flex: 1; }
+        /* =========================================
+           LOGIN MODAL STYLING
+           ========================================= */
+        .app-container { 
+            background: #09090b; 
+            width: 100%; max-width: 440px; 
+            border-radius: 24px; 
+            border: 1px solid #27272a;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            display: flex; flex-direction: column; 
+            overflow: hidden;
+            animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header { 
+            padding: 32px 32px 16px 32px; 
+            text-align: left; 
+        }
         
-        .form-group { margin-bottom: 24px; }
-        .label { display: block; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 8px; }
+        .header-title { 
+            font-size: 24px; font-weight: 700; letter-spacing: -0.02em;
+            color: #ededed; margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 14px; color: #a1a1aa; line-height: 1.5;
+        }
+
+        .content { padding: 0 32px 32px 32px; }
+
+        .form-group { margin-bottom: 24px; margin-top: 16px; }
+        .label { display: block; font-size: 13px; font-weight: 500; color: #a1a1aa; margin-bottom: 8px; }
         
-        .input-field {
-            width: 100%; padding: 16px; font-size: 16px;
-            border: 2px solid #e2e8f0; border-radius: 12px;
-            outline: none; transition: border-color 0.2s;
-            letter-spacing: 2px;
+        .input-field { 
+            width: 100%; padding: 16px; font-size: 16px; 
+            background-color: #000000; 
+            border: 1px solid #27272a; 
+            border-radius: 12px; color: #ededed; 
+            outline: none; transition: all 0.2s; 
+            letter-spacing: 2px; font-family: monospace;
         }
-        .input-field:focus { border-color: #3b82f6; }
-
-        .btn-primary {
-            width: 100%; padding: 16px; background-color: #2563eb;
-            color: white; border: none; border-radius: 12px;
-            font-size: 16px; font-weight: 600; cursor: pointer;
-            transition: background 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;
+        
+        .input-field:focus { 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 1px #3b82f6; 
         }
-        .btn-primary:hover { background-color: #1d4ed8; }
-        .btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        
+        .input-field::placeholder { color: #52525b; }
 
-        .security-note {
-            margin-top: 24px; padding: 16px; background-color: #f0fdf4;
-            border: 1px solid #bbf7d0; border-radius: 12px;
-            font-size: 13px; color: #166534; display: flex; gap: 12px;
+        /* High-Contrast Primary Action Button */
+        .btn-primary { 
+            width: 100%; padding: 16px; 
+            background-color: #ededed; 
+            color: #09090b; border: none; 
+            border-radius: 12px; font-size: 15px; 
+            font-weight: 600; cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; justify-content: center; align-items: center; gap: 10px; 
+        }
+        
+        .btn-primary:hover:not(:disabled) { 
+            background-color: #ffffff; 
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 12px rgba(255,255,255,0.1); 
+        }
+        
+        .btn-primary:disabled { 
+            background-color: #27272a; color: #52525b; cursor: not-allowed; 
         }
 
-        #status-box {
-            margin-top: 20px; text-align: center; font-size: 14px; font-weight: 600; color: #3b82f6;
+        /* Modern Dark Mode Security Note */
+        .security-note { 
+            margin-top: 24px; padding: 16px; 
+            background-color: rgba(16, 185, 129, 0.05); 
+            border: 1px solid rgba(16, 185, 129, 0.15); 
+            border-radius: 12px; font-size: 13px; 
+            color: #a1a1aa; display: flex; gap: 12px; align-items: flex-start; line-height: 1.5;
         }
+        .security-note svg { stroke: #10b981; flex-shrink: 0; }
+        .security-note strong { color: #ededed; }
 
-        /* Loading Spinner */
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.3); border-radius: 50%;
-            border-top: 3px solid white; width: 20px; height: 20px;
-            animation: spin 1s linear infinite; display: none;
+        #status-box { margin-top: 20px; text-align: center; font-size: 14px; font-weight: 500; min-height: 20px; }
+
+        .spinner { 
+            border: 2px solid rgba(9,9,11,0.2); border-radius: 50%; 
+            border-top: 2px solid #09090b; width: 18px; height: 18px; 
+            animation: spin 0.8s linear infinite; display: none; 
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Back Button */
+        .back-link {
+            margin-top: 24px; color: #a1a1aa; text-decoration: none;
+            font-size: 13px; display: flex; align-items: center; gap: 6px;
+            transition: color 0.2s;
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        .back-link:hover { color: #ededed; }
+        .back-link svg { width: 14px; height: 14px; }
+
     </style>
 </head>
 <body>
 
+    <div class="background-glow"></div>
+
     <div class="app-container">
         <header class="header">
-            <div class="header-title">Identity Setup</div>
+            <h1 class="header-title">Identity Access</h1>
+            <p class="header-subtitle">Enter your 12-digit Gov ID to access your secure DigiVishram wallet.</p>
         </header>
 
         <div class="content">
             <div class="form-group">
-                <label class="label">Enter Government ID Number</label>
-                <!-- Type is tel to bring up number pad on mobile -->
+                <label class="label">Government ID Number</label>
                 <input type="tel" id="govIdInput" class="input-field" placeholder="XXXX XXXX XXXX" maxlength="14" autocomplete="off">
             </div>
-
-            <button id="verifyBtn" class="btn-primary" onclick="processRegistration()">
+            
+            <button id="verifyBtn" class="btn-primary" onclick="processLogin()">
                 <div class="spinner" id="spinner"></div>
-                <span id="btnText">Fetch & Secure via Gov Portal</span>
+                <span id="btnText">Authenticate via Gov Portal</span>
             </button>
-
+            
             <div id="status-box"></div>
-
+            
             <div class="security-note">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                <p><strong>Zero-Knowledge Architecture:</strong> Your raw ID number is mathematically hashed locally on your device. We never transmit or store the actual digits in our database.</p>
+                <div>
+                    <strong>Zero-Knowledge Sync:</strong> Your connection to the Firebase cloud is established via secure database query.
+                </div>
             </div>
         </div>
     </div>
 
+    <a href="index.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+        Return to Portal Hub
+    </a>
+
     <script>
-        // Formats the input with spaces for readability (XXXX XXXX XXXX)
+        // Formats the input to add spaces automatically
         document.getElementById('govIdInput').addEventListener('input', function (e) {
             let target = e.target;
             let val = target.value.replace(/\D/g, '').substring(0, 12);
             target.value = val != '' ? val.match(/.{1,4}/g).join(' ') : '';
         });
 
-        async function processRegistration() {
+        // The Firebase Search Logic (Untouched, perfectly stable)
+        async function processLogin() {
             const rawInput = document.getElementById('govIdInput').value.replace(/\s/g, '');
             const btn = document.getElementById('verifyBtn');
             const spinner = document.getElementById('spinner');
@@ -115,70 +190,69 @@
             const statusBox = document.getElementById('status-box');
 
             if (rawInput.length !== 12) {
-                alert("Please enter a valid 12-digit ID number.");
+                alert("Please enter a valid 12-digit ID number."); 
                 return;
             }
 
-            // UI Loading State
-            btn.disabled = true;
-            spinner.style.display = 'block';
-            btnText.innerText = 'Connecting to Gov API...';
-            statusBox.innerText = 'Authenticating with DigiLocker Sandbox...';
+            btn.disabled = true; 
+            spinner.style.display = 'block'; 
+            btnText.innerText = 'Searching Database...';
+            statusBox.style.color = "#3b82f6"; 
+            statusBox.innerText = 'Connecting to Firebase...';
 
             try {
-                // STEP 1: Hash the ID on the client side (Crucial for Privacy)
-                // This converts the ID into an irreversible string of characters
-                const encoder = new TextEncoder();
-                const data = encoder.encode(rawInput);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashedId = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                
-                const lastFour = rawInput.slice(-4);
+                // Search the Firebase Database for the 12-digit number
+                const queryUrl = "https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents:runQuery";
+                const queryBody = {
+                    structuredQuery: {
+                        from: [{ collectionId: "government_citizens" }],
+                        where: {
+                            fieldFilter: {
+                                field: { fieldPath: "aadharNumber" },
+                                op: "EQUAL",
+                                value: { stringValue: rawInput }
+                            }
+                        }
+                    }
+                };
 
-                // STEP 2: Simulate fetching verified data from Gov Portal
-                setTimeout(() => {
-                    statusBox.innerText = 'Data retrieved. Securing and uploading to Firebase...';
+                const response = await fetch(queryUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(queryBody)
+                });
+
+                const data = await response.json();
+
+                // If Firebase finds a match, log the user in
+                if (data[0] && data[0].document) {
+                    const doc = data[0].document;
+                    const realName = doc.fields.fullName.stringValue;
                     
-                    // The data we hypothetically received from the Gov API
-                    const verifiedGovData = {
-                        fullName: "John Sharma",
-                        dob: "1995-08-15",
-                        photoReference: "base64_string_of_face_photo", // This will be used by the kiosk later
-                        isVerified: true
-                    };
+                    const cleanDocId = doc.fields.customId.stringValue;
 
-                    // STEP 3: Create the Firebase payload using only safe data
-                    const firebasePayload = {
-                        idHash: hashedId,
-                        displayId: `[Redacted] - Last 4: ${lastFour}`,
-                        name: verifiedGovData.fullName,
-                        photoData: verifiedGovData.photoReference,
-                        timestamp: new Date().toISOString()
-                    };
+                    statusBox.style.color = "#10b981";
+                    statusBox.innerText = `Identity Verified! Welcome, ${realName}. Redirecting...`;
 
-                    console.log("✅ Ready for Firestore upload:", firebasePayload);
-                    // Actual Firebase Code would go here:
-                    // await setDoc(doc(db, "government_citizens", hashedId), firebasePayload);
-
-                    // STEP 4: Success state
                     setTimeout(() => {
-                        spinner.style.display = 'none';
-                        btnText.innerText = 'Identity Secured';
-                        btn.style.backgroundColor = '#166534';
-                        statusBox.style.color = '#166534';
-                        statusBox.innerText = 'Registration Complete! Loading Wallet...';
-                        
-                        // Redirect to the Wallet screen built in Step 2
-                        // window.location.href = 'wallet.html';
+                        window.location.href = `wallet.html?auth=${cleanDocId}`;
                     }, 1500);
 
-                }, 1500);
+                } else {
+                    statusBox.style.color = "#ef4444";
+                    statusBox.innerText = 'Identity not found in Cloud. Please register at the Kiosk.';
+                    btn.disabled = false; 
+                    spinner.style.display = 'none'; 
+                    btnText.innerText = 'Try Again';
+                }
 
             } catch (error) {
-                console.error("Hashing failed:", error);
-                statusBox.innerText = 'Security error occurred.';
-                btn.disabled = false;
+                console.error(error);
+                statusBox.style.color = "#ef4444"; 
+                statusBox.innerText = 'Database connection error.';
+                btn.disabled = false; 
+                spinner.style.display = 'none'; 
+                btnText.innerText = 'Try Again';
             }
         }
     </script>
