@@ -3,207 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigiVishram</title>
+    <title>DigiVishram - The Future of Hospitality</title>
     <style>
         /* =========================================
-           ULTRA-MODERN RESET & BASE (Linear Aesthetic)
+           ULTRA-MODERN OLED BLACK DESIGN 
            ========================================= */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
         
         body { 
-            background-color: #000000; /* Pure OLED Black */
-            color: #ededed;
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; padding: 20px;
-            overflow: hidden;
+            background-color: #000000; color: #ededed;
+            overflow-x: hidden; scroll-behavior: smooth;
         }
 
         /* Subtle Background Glow */
         .background-glow {
-            position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+            position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
             width: 80vw; height: 80vw;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(0, 0, 0, 0) 60%);
             z-index: -1; pointer-events: none;
         }
 
-        /* =========================================
-           LAYOUT & TYPOGRAPHY
-           ========================================= */
-        .container {
-            width: 100%; max-width: 900px; 
-            display: flex; flex-direction: column; align-items: center;
-            animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Sleek Top Badge */
-        .status-badge {
-            display: flex; align-items: center; gap: 8px;
-            padding: 6px 14px; border-radius: 100px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 13px; font-weight: 500; color: #a1a1aa;
-            margin-bottom: 24px; /* Reduced gap */
-            backdrop-filter: blur(10px);
-        }
-        .status-dot { width: 6px; height: 6px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
-
-        .hero-title {
-            font-size: 56px; font-weight: 800; letter-spacing: -0.04em;
-            line-height: 1.2; /* Fixed the chopped 'g' */
-            padding-bottom: 10px; /* Extra invisible space so the 'g' tail isn't cut off */
-            margin-bottom: 4px; /* Pulled up */
-            text-align: center;
-            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            font-size: 18px; color: #a1a1aa; text-align: center;
-            max-width: 500px; margin-bottom: 24px; /* Pulled up significantly */
-            font-weight: 400; line-height: 1.5;
+        /* Helper Class for Text Gradients */
+        .text-gradient { 
+            background: linear-gradient(to right, #3b82f6, #10b981); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
         }
 
         /* =========================================
-           THE "BENTO BOX" GRID PORTALS
+           FROSTED GLASS NAVIGATION BAR
            ========================================= */
-        .portal-grid {
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 40px; 
-            width: 85%; 
+        .navbar { 
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid #27272a; 
+            padding: 20px 5%; display: flex; 
+            justify-content: space-between; align-items: center; 
         }
-
-        @media (max-width: 768px) {
-            .portal-grid { 
-                grid-template-columns: 1fr; 
-                gap: 24px; 
-                width: 90%; 
-            }
-        }
-
-        .portal-card {
-            position: relative; background: #09090b; 
-            border: 1px solid #27272a; border-radius: 20px;
-            padding: 32px; text-decoration: none; color: inherit;
-            display: flex; flex-direction: column; align-items: flex-start;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            overflow: hidden;
-        }
-
-        /* Internal Card Glow Effect */
-        .portal-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%;
-            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
-        }
-
-        .portal-card:hover { border-color: #52525b; transform: translateY(-4px); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); }
-        .portal-card:hover::before { opacity: 1; }
-
-        .card-icon {
-            width: 48px; height: 48px; border-radius: 12px;
-            background: #18181b; border: 1px solid #27272a;
-            display: flex; justify-content: center; align-items: center;
-            margin-bottom: 24px; transition: all 0.3s;
-        }
-        .portal-card:hover .card-icon { background: #27272a; border-color: #3f3f46; }
-        .card-icon svg { width: 22px; height: 22px; stroke: #d4d4d8; }
-
-        .card-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; color: #ededed; letter-spacing: -0.02em; }
-        .card-desc { font-size: 14px; color: #a1a1aa; line-height: 1.5; margin-bottom: 24px; }
-
-        /* The Animated Arrow */
-        .card-arrow {
-            margin-top: auto; display: flex; align-items: center; gap: 8px;
-            font-size: 14px; font-weight: 500; color: #ededed;
-        }
-        .card-arrow svg { width: 16px; height: 16px; transition: transform 0.3s; }
-        .portal-card:hover .card-arrow svg { transform: translateX(6px); }
-
-        /* Specific Accents for Cards on Hover */
-        .card-guest:hover .card-icon svg { stroke: #3b82f6; }
-        .card-hotel:hover .card-icon svg { stroke: #10b981; }
-
-        /* Rotating Features Text */
-        .feature-fader { height: 20px; overflow: hidden; margin-bottom: 32px; /* Pulled up */ }
-        .feature-text { font-size: 14px; color: #52525b; font-weight: 500; animation: fadeCycle 9s infinite; opacity: 0; }
         
-        @keyframes fadeCycle {
-            0%, 25% { opacity: 1; transform: translateY(0); }
-            30%, 100% { opacity: 0; transform: translateY(-10px); }
+        .nav-brand { font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+        .nav-brand span { color: #3b82f6; }
+
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: #a1a1aa; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .nav-links a:hover { color: #ffffff; }
+        
+        /* THE TEXT COLOR FIX IS HERE (!important forces pure white over the grey links) */
+        .btn-launch { 
+            background: #3b82f6; color: #ffffff !important; text-decoration: none; 
+            padding: 10px 20px; border-radius: 100px; font-weight: 700; 
+            font-size: 14px; transition: 0.3s; 
         }
+        .btn-launch:hover { background: #2563eb; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
+        .hero { 
+            height: 100vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; text-align: center;
+            padding: 0 20px;
+        }
+        .hero-badge { background: #1e293b; color: #10b981; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 700; margin-bottom: 24px; border: 1px solid #334155; }
+        .hero-title { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 24px; letter-spacing: -2px; }
+        
+        /* Slogan Styling */
+        .slogan-container { margin-bottom: 40px; }
+        .slogan-main { font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; margin-bottom: 8px; text-transform: uppercase; }
+        .slogan-sub { font-size: 16px; color: #a1a1aa; font-weight: 500; letter-spacing: 0.5px; }
+
+        .portal-buttons { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .btn-portal { 
+            padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 700; 
+            text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.3s;
+        }
+        .btn-wallet { background: #ffffff; color: #000000; }
+        .btn-wallet:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+        .btn-kiosk { background: #09090b; color: #ffffff; border: 1px solid #334155; }
+        .btn-kiosk:hover { background: #1e293b; border-color: #52525b; transform: translateY(-3px); }
+
+        /* =========================================
+           INFINITE TEXT MARQUEE LOOP
+           ========================================= */
+        .marquee-container {
+            width: 100%; overflow: hidden; background: #050505; padding: 24px 0;
+            border-top: 1px solid #1e293b; border-bottom: 1px solid #1e293b;
+            display: flex; white-space: nowrap;
+        }
+        
+        .marquee-track { display: flex; animation: scrollMarquee 25s linear infinite; }
+        
+        .marquee-text {
+            font-size: 28px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
+            background: linear-gradient(to right, #3b82f6, #10b981);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            padding-right: 30px;
+        }
+
+        @keyframes scrollMarquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+
+        /* =========================================
+           ABOUT / PROBLEM SECTION
+           ========================================= */
+        .about-section { padding: 100px 5%; max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-title { font-size: 36px; font-weight: 800; margin-bottom: 15px; }
+        .section-subtitle { color: #a1a1aa; font-size: 16px; max-width: 600px; margin: 0 auto; line-height: 1.5; }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        
+        /* HOVER ANIMATIONS */
+        .feature-card { 
+            background: #09090b; border: 1px solid #27272a; border-radius: 24px; 
+            overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; transform: translateY(40px); cursor: pointer;
+        }
+        .feature-card:hover { border-color: #3b82f6; transform: translateY(-12px) !important; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15); }
+        .card-img-wrapper { position: relative; width: 100%; height: 260px; overflow: hidden; background: #18181b; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: transform 0.6s ease, opacity 0.6s ease; }
+        .feature-card:hover .card-img { opacity: 1; transform: scale(1.08); }
+        .card-number { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); padding: 8px 14px; border-radius: 12px; font-weight: 800; font-size: 14px; color: #fff; border: 1px solid #334155; z-index: 2;}
+        .card-content { padding: 30px; position: relative; z-index: 2; background: linear-gradient(to top, #09090b 80%, transparent); margin-top: -20px; }
+        .card-title { font-size: 22px; font-weight: 800; margin-bottom: 12px; color: #ededed; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-desc { font-size: 15px; color: #a1a1aa; line-height: 1.6; }
+
+        /* =========================================
+           PRIVACY SHOWCASE SECTION
+           ========================================= */
+        .privacy-showcase {
+            background: #09090b; border: 1px solid #27272a; border-radius: 24px;
+            overflow: hidden; display: flex; align-items: stretch;
+            transition: all 0.4s ease; opacity: 0; transform: translateY(40px);
+            margin: 0 auto; max-width: 1100px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .privacy-showcase:hover { border-color: #10b981; transform: translateY(-8px) !important; box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15); }
+        .privacy-content-box { padding: 50px; flex: 1; display: flex; flex-direction: column; justify-content: center; z-index: 2; background: #09090b;}
+        .privacy-img-box { flex: 1; min-height: 350px; position: relative; }
+        .privacy-img-box img { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.5s;}
+        .privacy-showcase:hover .privacy-img-box img { opacity: 1; transform: scale(1.05); }
+        
+        .visible { opacity: 1 !important; transform: translateY(0) !important; }
+
+        @media (max-width: 800px) {
+            .privacy-showcase { flex-direction: column; }
+            .privacy-img-box { min-height: 250px; }
+            .privacy-content-box { padding: 30px; }
+        }
+
+        /* =========================================
+           OUR VISION & ROADMAP SECTION
+           ========================================= */
+        .vision-section {
+            padding: 80px 5% 120px 5%; max-width: 1400px; margin: 0 auto;
+        }
+        .vision-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+        }
+        
+        .vision-manifesto h2 { font-size: 42px; font-weight: 900; margin-bottom: 20px; line-height: 1.1; letter-spacing: -1px; }
+        .vision-manifesto p { font-size: 16px; color: #a1a1aa; line-height: 1.8; margin-bottom: 30px; }
+        .team-badge { display: inline-block; background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; color: #3b82f6; padding: 8px 16px; border-radius: 100px; font-weight: 700; font-size: 14px; letter-spacing: 1px; }
+
+        .roadmap-timeline { display: flex; flex-direction: column; gap: 24px; }
+        .roadmap-card {
+            background: #09090b; border: 1px solid #27272a; border-radius: 16px; padding: 24px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            opacity: 0; transform: translateX(30px);
+        }
+        .roadmap-card.visible { opacity: 1; transform: translateX(0); }
+        .roadmap-card:hover { border-color: #3b82f6; transform: translateX(-5px) !important; background: #111827; }
+        
+        .phase-badge { color: #10b981; font-size: 12px; font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+        .roadmap-title { font-size: 18px; font-weight: 700; color: #ededed; margin-bottom: 8px; }
+        .roadmap-desc { font-size: 14px; color: #a1a1aa; line-height: 1.5; }
+
+        @media (max-width: 960px) {
+            .vision-container { grid-template-columns: 1fr; gap: 40px; }
+        }
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+        .site-footer {
+            background: #050505; border-top: 1px solid #1e293b;
+            padding: 40px 20px; text-align: center;
+            font-size: 14px; color: #71717a; letter-spacing: 1px;
+        }
+        .site-footer strong { color: #ededed; font-weight: 800; letter-spacing: 2px; }
+        .heart-icon { color: #ef4444; }
     </style>
 </head>
 <body>
 
     <div class="background-glow"></div>
 
-    <div class="container">
-        <!-- System Status Badge -->
-        <div class="status-badge">
-            <div class="status-dot"></div>
-            Govt Network Online
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">DigiVishram</div>
+        <div class="nav-links">
+            <a href="#about">The Problem</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#vision">Vision</a>
+            <a href="register.html">Guest Login</a>
+            <a href="kiosk.html" class="btn-launch">Hotel Portal</a>
         </div>
+    </nav>
 
-        <!-- Hero Section -->
-        <h1 class="hero-title">DigiVishram</h1>
-        <p class="hero-subtitle">CHECKINS MADE EASY</p>
-
-        <!-- Dynamic Feature Text -->
-        <div class="feature-fader">
-            <div class="feature-text">Biometric Verification • Real-time Gov Sync</div>
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="hero-badge">● Gov Vault Online</div>
+        <h1 class="hero-title">Check-ins, <span class="text-gradient">Reimagined.</span></h1>
+        
+        <!-- NEW TEAM YUGANTAR SLOGAN -->
+        <div class="slogan-container">
+            <p class="slogan-main">Seamless Vishram. Limitless Yatra.</p>
+            <p class="slogan-sub">A Frictionless Stay for a Flawless Journey.</p>
         </div>
-
-        <!-- The Bento Grid Portals -->
-        <div class="portal-grid">
-            
-            <!-- Guest Portal Card -->
-            <a href="register.html" class="portal-card card-guest" onmousemove="handleMouseMove(event, this)">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
-                <h2 class="card-title">Guest Digital Wallet</h2>
-                <p class="card-desc">Authenticate your Government ID and access your encrypted travel history and digital passes.</p>
-                <div class="card-arrow">
-                    Access Portal
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
-                </div>
+        
+        <div class="portal-buttons">
+            <a href="register.html" class="btn-portal btn-wallet">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                Guest Login
             </a>
-
-            <!-- Hotel Portal Card -->
-            <a href="kiosk.html" class="portal-card card-hotel" onmousemove="handleMouseMove(event, this)">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path>
-                    </svg>
-                </div>
-                <h2 class="card-title">Hotel Kiosk Scanner</h2>
-                <p class="card-desc">Launch the front-desk biometric terminal to instantly register and verify arriving guests.</p>
-                <div class="card-arrow">
-                    Launch Terminal
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
-                </div>
+            <a href="kiosk.html" class="btn-portal btn-kiosk">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                Launch Hotel Kiosk
             </a>
+        </div>
+    </header>
 
+    <!-- INFINITE TEXT MARQUEE -->
+    <div class="marquee-container">
+        <div class="marquee-track">
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
+            <!-- Duplicate for perfect loop -->
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
+            <span class="marquee-text">SEAMLESS • PAPER-FREE • SECURE • FAST • </span>
         </div>
     </div>
 
-    <!-- Mouse Tracking Script for the Glow Effect -->
+    <!-- ABOUT SECTION (The 3 Problems) -->
+    <section id="about" class="about-section">
+        <div class="section-header">
+            <h2 class="section-title">The Legacy Infrastructure Problem</h2>
+            <p class="section-subtitle">The traditional hospitality sector is plagued by outdated, physical identification methods that frustrate guests and endanger data security. We solve this.</p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="card-img-wrapper">
+                    <div class="card-number">01</div>
+                    <img src="https://scanqueue.com/hotel-lobby-queue-problem.png" alt="Checkin Congestion" class="card-img">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Checkin Congestion</h3>
+                    <p class="card-desc">Guests endure exhausting queues at the reception desk to complete tedious physical paperwork. Manual ID verification bottlenecks operations, ruining the initial hospitality experience.</p>
+                </div>
+            </div>
+
+            <div class="feature-card animate-on-scroll" style="transition-delay: 0.1s;">
+                <div class="card-img-wrapper">
+                    <div class="card-number">02</div>
+                    <img src="https://th-i.thgim.com/public/incoming/yr3nnt/article65988760.ece/alternates/FREE_1200/CCI_UDHindu_KSL_UVH3VENRB_R1526053770_3_2c7a69ff-0eb3-40fc-856e-ddc9657bc5fc.jpg" alt="Identity Forgery" class="card-img">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Identity Forgery</h3>
+                    <p class="card-desc">Fraudsters easily exploit legacy systems using stolen or sophisticated fake ID cards to book rooms. Hotels lack the real-time biometric tools to authenticate physical documents accurately.</p>
+                </div>
+            </div>
+
+            <div class="feature-card animate-on-scroll" style="transition-delay: 0.2s;">
+                <div class="card-img-wrapper">
+                    <div class="card-number">03</div>
+                    <img src="https://media.istockphoto.com/id/1455946612/photo/computer-hacker.jpg?s=612x612&w=0&k=20&c=kgtnSnVCqc-c5WG3jPXykH4RLTkIqmFJKSC_DjXNuLg=" alt="Data Leak Vulnerability" class="card-img">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Data Leak Vulnerability</h3>
+                    <p class="card-desc">Physical ID photocopies and unsecured digital scans pile up in hotel back-offices, leaving highly sensitive personal data exposed to insider theft, loss, and massive cybersecurity breaches.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRIVACY SHOWCASE SECTION -->
+    <section id="privacy" class="about-section" style="padding-top: 40px; padding-bottom: 60px;">
+        <div class="section-header" style="margin-bottom: 40px;">
+            <h2 class="section-title">Zero-Knowledge <span class="text-gradient">Privacy</span></h2>
+            <p class="section-subtitle">Your data is yours. We engineered our architecture so that hotels never hold your identity.</p>
+        </div>
+        
+        <div class="privacy-showcase animate-on-scroll">
+            <div class="privacy-content-box">
+                <h3 class="card-title" style="margin-bottom: 16px; color: #10b981;">Encrypted Biometric Flags</h3>
+                <p class="card-desc" style="font-size: 16px; line-height: 1.8; color: #ededed;">
+                    Hotels <strong>never</strong> receive your actual Government ID or raw biometric data.<br><br>
+                    When you scan your face at the DigiVishram Kiosk, our decentralized vault only transmits a secure, encrypted verification "flag" (True/False). Your identity is verified instantly without ever being exposed, stored, or copied by the hotel terminal.
+                </p>
+            </div>
+            <div class="privacy-img-box">
+                <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" alt="Privacy Architecture">
+            </div>
+        </div>
+    </section>
+
+    <!-- OUR VISION SECTION -->
+    <section id="vision" class="vision-section">
+        <div class="vision-container">
+            <!-- Left Side: Manifesto -->
+            <div class="vision-manifesto animate-on-scroll">
+                <div class="team-badge">PROJECT ROADMAP</div>
+                <h2 style="margin-top: 20px;">The Yugantar <span class="text-gradient">Vision</span></h2>
+                <p>We started this project because we believe physical documents belong in the past. DigiVishram is more than just a hotel check-in app; it is the foundation for a completely frictionless, decentralized identity ecosystem.</p>
+                <p>Our long-term mission is to eliminate physical barriers across all sectors of public infrastructure, ensuring that your face is the only key you ever need to travel, stay, and live securely.</p>
+            </div>
+
+            <!-- Right Side: Timeline -->
+            <div class="roadmap-timeline">
+                <div class="roadmap-card animate-on-scroll" style="transition-delay: 0.1s;">
+                    <div class="phase-badge">Phase 1 (Current)</div>
+                    <div class="roadmap-title">Smart Hospitality</div>
+                    <div class="roadmap-desc">Deploying biometric kiosks and decentralized digital wallets to eradicate hotel check-in queues and paper documentation.</div>
+                </div>
+
+                <div class="roadmap-card animate-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="phase-badge">Phase 2</div>
+                    <div class="roadmap-title">Cross-Border Transit</div>
+                    <div class="roadmap-desc">Scaling our zero-knowledge infrastructure to airports and railway hubs, allowing travelers to board seamlessly using unified biometric passes.</div>
+                </div>
+
+                <div class="roadmap-card animate-on-scroll" style="transition-delay: 0.3s;">
+                    <div class="phase-badge">Phase 3</div>
+                    <div class="roadmap-title">The Zero-Knowledge City</div>
+                    <div class="roadmap-desc">Integrating our secure authentication gateway with local venues, events, and secure facilities to create a truly frictionless, paperless ecosystem.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER SECTION FOR TEAM YUGANTAR -->
+    <footer class="site-footer">
+        Made with <span class="heart-icon">❤</span> by <strong>TEAM YUGANTAR</strong>
+    </footer>
+
+    <!-- INTERACTIVE SCROLL SCRIPT -->
     <script>
-        function handleMouseMove(e, card) {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15 
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const items = document.querySelectorAll('.animate-on-scroll');
+            items.forEach(item => {
+                observer.observe(item);
+            });
+        });
     </script>
 </body>
 </html>

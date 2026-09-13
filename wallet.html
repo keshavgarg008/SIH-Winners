@@ -6,132 +6,107 @@
     <title>DigiVishram - Digital Wallet (MakeMyTrip Engine)</title>
     <style>
         /* =========================================
-           ULTRA-MODERN OLED BLACK DESIGN 
+           ULTRA-MODERN OLED BLACK DESIGN (HACKATHON EDITION)
            ========================================= */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
         
-        body { 
-            background-color: #000000; color: #ededed;
-            min-height: 100vh; overflow-x: hidden;
-            display: flex; flex-direction: column;
-        }
+        body { background-color: #000000; color: #ededed; overflow-x: hidden; scroll-behavior: smooth; }
+        .background-glow { position: fixed; top: -20%; left: 50%; transform: translateX(-50%); width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(0, 0, 0, 0) 60%); z-index: -1; pointer-events: none; }
 
-        .background-glow {
-            position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
-            width: 80vw; height: 80vw;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
-            z-index: -1; pointer-events: none;
-        }
-
-        /* FROSTED GLASS NAVIGATION BAR */
-        .navbar { 
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid #27272a; 
-            padding: 16px 24px; display: flex; 
-            justify-content: space-between; align-items: center; 
-        }
-        
-        .nav-brand { font-size: 18px; font-weight: 700; color: #ededed; display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; }
+        /* NAVBAR */
+        .navbar { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid #27272a; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
         .nav-brand span { color: #3b82f6; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: #a1a1aa; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .nav-links a:hover { color: #ffffff; }
+        .btn-launch { background: #3b82f6; color: white; text-decoration: none; padding: 10px 20px; border-radius: 100px; font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .btn-launch:hover { background: #2563eb; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+
+        /* HERO SECTION */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+        .hero-badge { background: #1e293b; color: #10b981; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 700; margin-bottom: 24px; border: 1px solid #334155; }
+        .hero-title { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -2px; }
+        .hero-title span { background: linear-gradient(to right, #3b82f6, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 18px; color: #a1a1aa; max-width: 600px; line-height: 1.6; margin-bottom: 40px; }
         
-        .user-pill { 
-            background-color: #09090b; border: 1px solid #27272a; 
-            padding: 8px 16px; border-radius: 100px; font-size: 13px; 
-            color: #a1a1aa; display: flex; align-items: center; gap: 8px; 
-        }
-        .user-pill strong { color: #ededed; letter-spacing: 0.5px; }
-        .id-mask { color: #10b981; font-family: monospace; font-size: 12px; font-weight: bold; background: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px; margin-left: 6px;}
+        .portal-buttons { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .btn-portal { padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .btn-wallet { background: #ffffff; color: #000000; cursor: pointer; border: none; }
+        .btn-wallet:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+        .btn-kiosk { background: #09090b; color: #ffffff; border: 1px solid #334155; }
+        .btn-kiosk:hover { background: #1e293b; border-color: #52525b; transform: translateY(-3px); }
 
-        /* MAIN SCROLLABLE CONTAINER */
-        .main-container { 
-            width: 100%; max-width: 1000px; margin: 0 auto; 
-            padding: 40px 24px 80px 24px; display: flex; flex-direction: column; gap: 48px;
-            animation: fadeUp 0.6s forwards;
-        }
+        /* ABOUT SECTION */
+        .about-section { padding: 100px 5%; max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-title { font-size: 36px; font-weight: 800; margin-bottom: 15px; }
+        .section-subtitle { color: #a1a1aa; font-size: 16px; max-width: 600px; margin: 0 auto; }
 
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .feature-card { background: #09090b; border: 1px solid #27272a; border-radius: 24px; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; transform: translateY(40px); cursor: pointer; }
+        .feature-card.visible { opacity: 1; transform: translateY(0); }
+        .feature-card:hover { border-color: #3b82f6; transform: translateY(-12px) !important; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15); }
+        .card-img-wrapper { position: relative; width: 100%; height: 260px; overflow: hidden; background: #18181b; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: transform 0.6s ease, opacity 0.6s ease; }
+        .feature-card:hover .card-img { opacity: 1; transform: scale(1.08); }
+        .card-number { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); padding: 8px 14px; border-radius: 12px; font-weight: 800; font-size: 14px; color: #fff; border: 1px solid #334155; z-index: 2;}
+        .card-content { padding: 30px; position: relative; z-index: 2; background: linear-gradient(to top, #09090b 80%, transparent); margin-top: -20px; }
+        .card-title { font-size: 22px; font-weight: 800; margin-bottom: 12px; color: #ededed; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-desc { font-size: 15px; color: #a1a1aa; line-height: 1.6; }
+
+        /* WALLET UI */
+        #walletApp { display: none; padding-top: 100px; padding-bottom: 80px; max-width: 1000px; margin: 0 auto; width: 100%; padding-left: 24px; padding-right: 24px; animation: fadeUp 0.6s forwards; }
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        .section-header { margin-bottom: 20px; }
-        .section-title { font-size: 24px; font-weight: 700; color: #ededed; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
-        .section-subtitle { font-size: 14px; color: #a1a1aa; margin-top: 6px; }
-
         /* HORIZONTAL HOTEL CAROUSEL */
-        .carousel-wrapper {
-            display: flex; gap: 20px; overflow-x: auto; 
-            padding-bottom: 20px; scroll-snap-type: x mandatory;
-            scrollbar-width: none; -ms-overflow-style: none;
-        }
+        .carousel-wrapper { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
         .carousel-wrapper::-webkit-scrollbar { display: none; }
-
-        .hotel-card { 
-            min-width: 320px; flex-shrink: 0; scroll-snap-align: start;
-            background-color: #09090b; border: 1px solid #27272a; 
-            border-radius: 20px; overflow: hidden; 
-            transition: all 0.3s ease; position: relative;
-            display: flex; flex-direction: column;
-        }
+        .hotel-card { min-width: 320px; flex-shrink: 0; scroll-snap-align: start; background-color: #09090b; border: 1px solid #27272a; border-radius: 20px; overflow: hidden; transition: all 0.3s ease; position: relative; display: flex; flex-direction: column; }
         .hotel-card:hover { border-color: #52525b; transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
         .hotel-photo { width: 100%; height: 180px; object-fit: cover; border-bottom: 1px solid #27272a; background: #18181b; }
         .hotel-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .hotel-name { font-size: 18px; font-weight: 600; color: #ededed; margin-bottom: 4px; }
         .hotel-location { font-size: 14px; color: #a1a1aa; display: flex; align-items: center; gap: 6px; margin-bottom: 15px; }
-        
-        .btn-book { 
-            background: #3b82f6; color: white; border: none; padding: 12px; 
-            border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; 
-            width: 100%; margin-top: auto;
-        }
+        .btn-book { background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%; margin-top: auto; }
         .btn-book:hover { background: #2563eb; }
 
-        /* VERTICAL DIGITAL PASSES (HISTORY) */
+        /* VERTICAL DIGITAL PASSES */
         .wallet-grid { display: flex; flex-direction: column; gap: 16px; }
-        
-        .wallet-card { 
-            background: #09090b; border: 1px solid #27272a; 
-            border-radius: 16px; padding: 24px; position: relative; 
-            overflow: hidden; transition: all 0.2s ease;
-            border-left: 4px solid #10b981;
-        }
+        .wallet-card { background: #09090b; border: 1px solid #27272a; border-radius: 16px; padding: 24px; position: relative; overflow: hidden; transition: all 0.2s ease; border-left: 4px solid #10b981; }
+        .wallet-card.checked-out { border-left-color: #ef4444; opacity: 0.7; }
         .wallet-card:hover { background: #18181b; }
-        
-        .wallet-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .wallet-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;}
         .pass-title { font-size: 18px; font-weight: 700; color: #ededed; }
         .pass-status { font-size: 11px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 100px; letter-spacing: 0.5px; }
-        
+        .pass-status.status-checkout { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
         .pass-details { font-size: 14px; color: #a1a1aa; line-height: 1.6; }
         .detail-row { display: flex; gap: 8px; margin-bottom: 4px; }
         .detail-label { color: #52525b; width: 100px; }
         .detail-value { color: #ededed; font-family: monospace; }
-
         .loading-text { color: #52525b; font-size: 14px; font-style: italic; padding: 20px 0; text-align: center; }
 
-        /* =========================================
-           MAKEMYTRIP STYLE BOOKING MODAL
-           ========================================= */
+        /* NEW CHECKOUT BUTTON */
+        .btn-checkout { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-checkout:hover { background: #dc2626; }
+
+        /* BOOKING MODAL */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .modal-content { background: #09090b; border: 1px solid #27272a; border-radius: 20px; padding: 30px; width: 90%; max-width: 450px; color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); max-height: 90vh; overflow-y: auto; }
         .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 5px; text-align: center; }
         .modal-subtitle { font-size: 13px; color: #a1a1aa; text-align: center; margin-bottom: 20px; }
-        
-        /* DATE INPUTS */
         .date-picker-group { display: flex; gap: 12px; margin-bottom: 20px; }
         .date-picker-group > div { flex: 1; }
         .date-label { display: block; font-size: 12px; color: #a1a1aa; margin-bottom: 6px; font-weight: 600; }
         .date-input { width: 100%; background: #000; border: 1px solid #27272a; padding: 12px; border-radius: 10px; color: white; font-family: inherit; outline: none; transition: 0.2s; color-scheme: dark; }
         .date-input:focus { border-color: #3b82f6; }
-
         .room-option { background: #000; border: 1px solid #27272a; border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
         .room-option:hover:not(.sold-out) { border-color: #3b82f6; background: #18181b; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .room-option.sold-out { opacity: 0.5; cursor: not-allowed; border-color: #ef4444; }
-        
         .room-name { font-weight: 700; font-size: 15px; }
         .room-price { color: #10b981; font-weight: 700; font-size: 16px; }
         .room-count { font-size: 12px; color: #a1a1aa; margin-top: 4px; }
         .room-sold-text { font-size: 12px; color: #ef4444; font-weight: bold; margin-top: 4px; }
-        
         .close-modal { background: transparent; color: #a1a1aa; border: none; font-size: 14px; cursor: pointer; width: 100%; margin-top: 15px; padding: 10px; font-weight: 600; transition: 0.2s; }
         .close-modal:hover { color: white; }
     </style>
@@ -140,18 +115,84 @@
 
     <div class="background-glow"></div>
 
-    <header class="navbar">
-        <div class="nav-brand">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            DigiVishram <span>Wallet</span>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">DigiVishram</div>
+        <div class="nav-links">
+            <a href="#about" id="navAbout">The Problem</a>
+            <span id="navUserBadge" style="display:none; color:#10b981; font-size:14px; font-family:monospace; background:rgba(16,185,129,0.1); padding:4px 8px; border-radius:4px;"></span>
+            <a href="register.html" id="navLoginBtn">Guest Login</a>
+            <a href="kiosk.html" class="btn-launch">Hotel Portal</a>
         </div>
-        <div class="user-pill" id="userNavBar">
-            👤 <strong id="userNameDisplay">Authenticating...</strong>
-        </div>
-    </header>
+    </nav>
 
-    <main class="main-container">
-        
+    <!-- LANDING PAGE WRAPPER -->
+    <div id="landingPage">
+        <!-- HERO SECTION -->
+        <header class="hero">
+            <div class="hero-badge">● Gov Vault Online</div>
+            <h1 class="hero-title">Check-ins, <span>Reimagined.</span></h1>
+            <p class="hero-subtitle">The decentralized biometric hospitality network. Skip the reception, stop the fraud, and unlock your room with just your face.</p>
+            
+            <div class="portal-buttons">
+                <!-- If they have an auth ID, this triggers the wallet UI to show -->
+                <button class="btn-portal btn-wallet" onclick="triggerWalletLogin()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                    Guest Login
+                </button>
+                <a href="kiosk.html" class="btn-portal btn-kiosk">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                    Launch Hotel Kiosk
+                </a>
+            </div>
+        </header>
+
+        <!-- ABOUT SECTION -->
+        <section id="about" class="about-section">
+            <div class="section-header">
+                <h2 class="section-title">The Legacy Infrastructure Problem</h2>
+                <p class="section-subtitle">The traditional hospitality sector is plagued by outdated, physical identification methods that frustrate guests and endanger data security.</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="feature-card">
+                    <div class="card-img-wrapper">
+                        <div class="card-number">01</div>
+                        <img src="https://images.unsplash.com/photo-1541847190013-05f152d113c0?auto=format&fit=crop&w=800&q=80" alt="Checkin Congestion" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Checkin Congestion</h3>
+                        <p class="card-desc">Guests endure exhausting queues at the reception desk to complete tedious physical paperwork. Manual ID verification bottlenecks operations, ruining the initial hospitality experience.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="transition-delay: 0.1s;">
+                    <div class="card-img-wrapper">
+                        <div class="card-number">02</div>
+                        <img src="https://images.unsplash.com/photo-1569004690740-fb9741e411b0?auto=format&fit=crop&w=800&q=80" alt="Identity Forgery" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Identity Forgery</h3>
+                        <p class="card-desc">Fraudsters easily exploit legacy systems using stolen or sophisticated fake ID cards to book rooms. Hotels lack the real-time biometric tools to authenticate physical documents accurately.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card" style="transition-delay: 0.2s;">
+                    <div class="card-img-wrapper">
+                        <div class="card-number">03</div>
+                        <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80" alt="Data Leak Vulnerability" class="card-img">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Data Leak Vulnerability</h3>
+                        <p class="card-desc">Physical ID photocopies and unsecured digital scans pile up in hotel back-offices, leaving highly sensitive personal data exposed to insider theft, loss, and massive cybersecurity breaches.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- WALLET APP WRAPPER (HIDDEN UNTIL AUTHENTICATED) -->
+    <main id="walletApp">
         <section>
             <div class="section-header">
                 <h2 class="section-title">Verified Hospitality Network</h2>
@@ -171,7 +212,6 @@
                 <div class="loading-text">Scanning Government Vault for your stays...</div>
             </div>
         </section>
-
     </main>
 
     <!-- BOOKING MODAL POPUP -->
@@ -199,19 +239,55 @@
 
     <script>
         let GLOBAL_AUTH_ID = "";
+        let HOTELS_CACHE = {}; 
+
+        // ARRAY OF DIVERSE PREMIUM UNSPLASH IMAGES FOR DYNAMIC ROTATION
+        const hotelImages = [
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80",
+            "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGx1eHVyeSUyMGhvdGVsfGVufDB8fDB8fHww",
+            "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&q=80",
+            "https://images.unsplash.com/photo-1542314831-c6a4d14eff6c?w=600&q=80",
+            "https://images.unsplash.com/photo-1596436889106-be35e843f6a6?w=600&q=80",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80",
+            "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80",
+            "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80"
+        ];
 
         // ==========================================
-        // 1. CLOUD ROUTING & AUTHENTICATION
+        // 1. SCROLL ANIMATION & AUTH CHECK
         // ==========================================
-        window.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => observer.observe(card));
+
             const urlParams = new URLSearchParams(window.location.search);
-            GLOBAL_AUTH_ID = urlParams.get('auth'); 
-
-            if (!GLOBAL_AUTH_ID) {
-                alert("Unauthorized Access. Please login via the Access Portal.\n\n(Hint: add ?auth=YOUR_ID to the URL!)");
-                return;
+            if (urlParams.has('auth')) {
+                GLOBAL_AUTH_ID = urlParams.get('auth');
+                authenticateUserAndLoadWallet();
             }
+        });
 
+        // ==========================================
+        // 2. ROUTING (LANDING PAGE -> WALLET)
+        // ==========================================
+        function triggerWalletLogin() {
+            if (!GLOBAL_AUTH_ID) {
+                window.location.href = 'register.html';
+            } else {
+                authenticateUserAndLoadWallet();
+            }
+        }
+
+        async function authenticateUserAndLoadWallet() {
             const docUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/government_citizens/${GLOBAL_AUTH_ID}`;
             
             try {
@@ -219,99 +295,28 @@
                 if (response.status === 200) {
                     const docData = await response.json();
                     const realName = docData.fields.fullName.stringValue;
-                    document.getElementById('userNameDisplay').innerHTML = `${realName} <span class="id-mask">✓ Cloud Verified</span>`;
+                    
+                    document.getElementById('landingPage').style.display = 'none';
+                    document.getElementById('walletApp').style.display = 'block';
+                    
+                    document.getElementById('navAbout').style.display = 'none';
+                    document.getElementById('navLoginBtn').style.display = 'none';
+                    document.getElementById('navUserBadge').style.display = 'inline-block';
+                    document.getElementById('navUserBadge').innerText = `${realName} ✓ VERIFIED`;
                     
                     fetchLiveHotels();
                     fetchMyBookings(GLOBAL_AUTH_ID); 
                 } else {
                     alert("Session invalid. ID not found in database.");
+                    window.location.href = 'register.html';
                 }
             } catch (err) {
-                document.getElementById('userNameDisplay').innerText = "Connection Error";
-            }
-        });
-
-        // ==========================================
-        // 2. FETCH HISTORY PASSES (WITH CRASH PROTECTION)
-        // ==========================================
-        async function fetchMyBookings(authId) {
-            const walletContainer = document.getElementById('walletPassesContainer');
-            const url = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/permanent_logs?pageSize=1000`;
-
-            try {
-                const response = await fetch(url, { cache: 'no-store' });
-                const data = await response.json();
-
-                // If Firebase is entirely empty, it returns an error 404 instead of documents
-                if (data.error && data.error.code === 404) {
-                    walletContainer.innerHTML = `<div class="loading-text">No travel history found. Visit a kiosk or book below to generate your first pass!</div>`;
-                    return;
-                }
-
-                // Safely filter documents, handling old broken test logs safely
-                const myDocs = (data.documents || []).filter(doc => {
-                    return doc.fields && doc.fields.citizenId && doc.fields.citizenId.stringValue === authId;
-                });
-
-                if (myDocs.length === 0) {
-                    walletContainer.innerHTML = `<div class="loading-text">No travel history found in your vault. Visit a kiosk or book below to generate your first pass!</div>`;
-                    return;
-                }
-
-                walletContainer.innerHTML = ""; 
-
-                // Safely sort by check-in time (protects against old missing timestamps)
-                myDocs.sort((a, b) => {
-                    const timeA = a.fields.checkInTime ? new Date(a.fields.checkInTime.timestampValue).getTime() : 0;
-                    const timeB = b.fields.checkInTime ? new Date(b.fields.checkInTime.timestampValue).getTime() : 0;
-                    return timeB - timeA;
-                });
-
-                myDocs.forEach(doc => {
-                    const fields = doc.fields;
-                    
-                    // Safely extract fields, providing fallbacks if an old document is missing them
-                    const hotelName = fields.hotelId ? fields.hotelId.stringValue : "Unknown Location";
-                    const checkInStatus = fields.status ? fields.status.stringValue : "Biometrically Verified";
-                    const roomType = fields.roomType ? fields.roomType.stringValue : "Standard Room";
-                    
-                    let rawDate = Date.now();
-                    if (fields.checkInTime && fields.checkInTime.timestampValue) {
-                        rawDate = fields.checkInTime.timestampValue;
-                    }
-
-                    let startDate = new Date(rawDate).toLocaleDateString('en-IN');
-                    if (fields.startDate && fields.startDate.stringValue) {
-                        startDate = fields.startDate.stringValue;
-                    }
-
-                    const endDate = fields.endDate ? fields.endDate.stringValue : "TBD";
-                    const logId = "TXN-" + new Date(rawDate).getTime().toString().slice(-8);
-
-                    const newPass = document.createElement('div');
-                    newPass.className = 'wallet-card';
-                    newPass.innerHTML = `
-                        <div class="wallet-header">
-                            <span class="pass-title">${hotelName.replace(/_/g, ' ')}</span>
-                            <span class="pass-status">${checkInStatus.includes("Wallet") ? "PRE-BOOKED" : "VERIFIED PASS"}</span>
-                        </div>
-                        <div class="pass-details">
-                            <div class="detail-row"><span class="detail-label">Room:</span> <span class="detail-value" style="color:#3b82f6;">${roomType}</span></div>
-                            <div class="detail-row"><span class="detail-label">Stay Dates:</span> <span class="detail-value">${startDate} to ${endDate}</span></div>
-                            <div class="detail-row"><span class="detail-label">Auth Level:</span> <span class="detail-value" style="color:#10b981;">${checkInStatus}</span></div>
-                            <div class="detail-row"><span class="detail-label">Network ID:</span> <span class="detail-value" style="color:#a1a1aa;">${logId}</span></div>
-                        </div>
-                    `;
-                    walletContainer.appendChild(newPass);
-                });
-            } catch (error) {
-                console.error("Firebase Parse Error:", error);
-                walletContainer.innerHTML = `<div class="loading-text" style="color:#ef4444;">Error retrieving secure folder. Check console logs.</div>`;
+                alert("Connection Error. Check internet.");
             }
         }
 
         // ==========================================
-        // 3. FETCH LIVE HOTELS FOR CAROUSEL
+        // 3. FETCH LIVE HOTELS (DYNAMIC IMAGES)
         // ==========================================
         async function fetchLiveHotels() {
             const carousel = document.getElementById('hotelCarousel');
@@ -326,15 +331,17 @@
                     return;
                 }
 
-                data.documents.forEach(doc => {
+                data.documents.forEach((doc, index) => {
                     const fields = doc.fields;
                     const hName = fields.hotelName.stringValue;
                     const hLoc = fields.location.stringValue;
                     const hId = fields.hotelId ? fields.hotelId.stringValue : hName.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase();
                     
-                    const photoSrc = (fields.photoUrl && fields.photoUrl.stringValue) 
-                        ? fields.photoUrl.stringValue 
-                        : "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80";
+                    HOTELS_CACHE[hName] = hId;
+                    
+                    // DYNAMIC IMAGE ROTATION FIX
+                    const fallbackImage = hotelImages[index % hotelImages.length];
+                    const photoSrc = (fields.photoUrl && fields.photoUrl.stringValue) ? fields.photoUrl.stringValue : fallbackImage;
 
                     const item = document.createElement('div');
                     item.className = 'hotel-card';
@@ -357,7 +364,136 @@
         }
 
         // ==========================================
-        // 4. BOOKING MODAL LOGIC WITH DATES
+        // 4. FETCH HISTORY & ACTIVE PASSES
+        // ==========================================
+        async function fetchMyBookings(authId) {
+            const walletContainer = document.getElementById('walletPassesContainer');
+            const url = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/permanent_logs?pageSize=1000`;
+
+            try {
+                const response = await fetch(url, { cache: 'no-store' });
+                const data = await response.json();
+
+                if (data.error && data.error.code === 404) {
+                    walletContainer.innerHTML = `<div class="loading-text">No travel history found. Visit a kiosk or book below to generate your first pass!</div>`;
+                    return;
+                }
+
+                const myDocs = (data.documents || []).filter(doc => {
+                    return doc.fields && doc.fields.citizenId && doc.fields.citizenId.stringValue === authId;
+                });
+
+                if (myDocs.length === 0) {
+                    walletContainer.innerHTML = `<div class="loading-text">No travel history found in your vault. Visit a kiosk or book below to generate your first pass!</div>`;
+                    return;
+                }
+
+                walletContainer.innerHTML = ""; 
+
+                myDocs.sort((a, b) => {
+                    const timeA = a.fields.checkInTime ? new Date(a.fields.checkInTime.timestampValue).getTime() : 0;
+                    const timeB = b.fields.checkInTime ? new Date(b.fields.checkInTime.timestampValue).getTime() : 0;
+                    return timeB - timeA;
+                });
+
+                myDocs.forEach(doc => {
+                    const docId = doc.name.split('/').pop(); 
+                    const fields = doc.fields;
+                    
+                    const hotelName = fields.hotelId ? fields.hotelId.stringValue : "Unknown Location";
+                    const checkInStatus = fields.status ? fields.status.stringValue : "Biometrically Verified";
+                    const roomType = fields.roomType ? fields.roomType.stringValue : "Standard Room";
+                    
+                    const isCheckedOut = checkInStatus.includes("Completed") || checkInStatus.includes("Checked Out");
+                    
+                    let rawDate = Date.now();
+                    if (fields.checkInTime && fields.checkInTime.timestampValue) rawDate = fields.checkInTime.timestampValue;
+
+                    let startDate = new Date(rawDate).toLocaleDateString('en-IN');
+                    if (fields.startDate && fields.startDate.stringValue) startDate = fields.startDate.stringValue;
+
+                    const endDate = fields.endDate ? fields.endDate.stringValue : "TBD";
+                    const logId = "TXN-" + new Date(rawDate).getTime().toString().slice(-8);
+
+                    const newPass = document.createElement('div');
+                    newPass.className = `wallet-card ${isCheckedOut ? 'checked-out' : ''}`;
+                    
+                    let checkoutHTML = '';
+                    if (!isCheckedOut) {
+                        checkoutHTML = `<button class="btn-checkout" onclick="processCheckout('${docId}', '${hotelName.replace(/'/g, "\\'")}', '${roomType.replace(/'/g, "\\'")}')">Checkout & Free Room</button>`;
+                    }
+
+                    newPass.innerHTML = `
+                        <div class="wallet-header">
+                            <span class="pass-title">${hotelName.replace(/_/g, ' ')}</span>
+                            <div>
+                                ${checkoutHTML}
+                                <span class="pass-status ${isCheckedOut ? 'status-checkout' : ''}">${isCheckedOut ? 'COMPLETED' : 'ACTIVE PASS'}</span>
+                            </div>
+                        </div>
+                        <div class="pass-details">
+                            <div class="detail-row"><span class="detail-label">Room:</span> <span class="detail-value" style="color:#3b82f6;">${roomType}</span></div>
+                            <div class="detail-row"><span class="detail-label">Stay Dates:</span> <span class="detail-value">${startDate} to ${endDate}</span></div>
+                            <div class="detail-row"><span class="detail-label">Auth Level:</span> <span class="detail-value" style="color:${isCheckedOut ? '#a1a1aa' : '#10b981'};">${checkInStatus}</span></div>
+                            <div class="detail-row"><span class="detail-label">Network ID:</span> <span class="detail-value" style="color:#a1a1aa;">${logId}</span></div>
+                        </div>
+                    `;
+                    walletContainer.appendChild(newPass);
+                });
+            } catch (error) {
+                console.error("Firebase Parse Error:", error);
+                walletContainer.innerHTML = `<div class="loading-text" style="color:#ef4444;">Error retrieving secure folder. Check console logs.</div>`;
+            }
+        }
+
+        // ==========================================
+        // 5. THE NEW CHECKOUT ENGINE (+1 INVENTORY)
+        // ==========================================
+        async function processCheckout(docId, hotelName, roomTypeName) {
+            const confirmation = confirm(`Are you sure you want to checkout of ${hotelName}? This will return the room to inventory.`);
+            if (!confirmation) return;
+
+            const hotelId = HOTELS_CACHE[hotelName] || hotelName.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase();
+            
+            try {
+                const passUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/permanent_logs/${docId}?updateMask.fieldPaths=status`;
+                await fetch(passUrl, {
+                    method: "PATCH", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ fields: { status: { stringValue: "Completed (Checked Out)" } } })
+                });
+
+                const hotelUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/registered_hotels/${hotelId}`;
+                const hotelRes = await fetch(hotelUrl, { cache: 'no-store' });
+                const hotelData = await hotelRes.json();
+
+                if (hotelData.fields && hotelData.fields.rooms) {
+                    let roomsArray = hotelData.fields.rooms.arrayValue.values || [];
+                    
+                    for (let i = 0; i < roomsArray.length; i++) {
+                        if (roomsArray[i].mapValue.fields.type.stringValue === roomTypeName) {
+                            let currentCount = parseInt(roomsArray[i].mapValue.fields.count.integerValue);
+                            roomsArray[i].mapValue.fields.count.integerValue = currentCount + 1; 
+                            break;
+                        }
+                    }
+
+                    await fetch(`${hotelUrl}?updateMask.fieldPaths=rooms`, { 
+                        method: "PATCH", headers: { "Content-Type": "application/json" }, 
+                        body: JSON.stringify({ fields: { rooms: { arrayValue: { values: roomsArray } } } }) 
+                    });
+                }
+
+                alert("Checkout successful! Room returned to network inventory.");
+                fetchMyBookings(GLOBAL_AUTH_ID);
+                
+            } catch (err) {
+                alert("Error processing checkout. Please try again.");
+                console.error(err);
+            }
+        }
+
+        // ==========================================
+        // 6. BOOKING ENGINE (SUBTRACTS INVENTORY)
         // ==========================================
         async function openBookingModal(hotelId, hotelName) {
             document.getElementById('modalHotelName').innerText = hotelName;
@@ -443,12 +579,9 @@
             const hotelUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/registered_hotels/${hotelId}?updateMask.fieldPaths=rooms`;
             
             try {
-                // Update Inventory
                 await fetch(hotelUrl, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fields: { rooms: { arrayValue: { values: roomsArray } } } }) });
 
-                // Create Digital Pass WITH DATES
                 const passDocId = `${GLOBAL_AUTH_ID}_${hotelId}_${Date.now()}`;
-                
                 const passUrl = `https://firestore.googleapis.com/v1/projects/yatrisathi-4e0fb/databases/(default)/documents/permanent_logs?documentId=${passDocId}`;
                 const passPayload = {
                     fields: {
@@ -463,7 +596,6 @@
                 };
                 await fetch(passUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(passPayload) });
 
-                // Close and Refresh
                 document.getElementById('bookingModal').style.display = 'none';
                 fetchMyBookings(GLOBAL_AUTH_ID);
                 
